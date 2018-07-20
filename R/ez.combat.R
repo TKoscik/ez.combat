@@ -186,10 +186,10 @@ ez.combat <- function(df,
 
   bayesdata <- (bayesdata*(sqrt(var.pooled)%*%t(rep(1,n.array))))+stand.mean
 
-  if (opts$out.opt[1] == "append") {
+  if (opt$out.opt[1] == "append") {
     new.df <- data.frame(df, t(bayesdata))
     colnames(df) <- c(colnames(df), paste0(dv.ls, ".cb"))
-  } else if (opts$out.opt[1] == "overwrite") {
+  } else if (opt$out.opt[1] == "overwrite") {
     new.df <- df
     new.df[ ,dv.ls] <- t(bayesdata)
   }
