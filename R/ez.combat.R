@@ -20,7 +20,7 @@ ez.combat <- function(df,
                       adjust.var = "all",
                       exclude.var = NULL,
                       model = NULL,
-                      opt = list(out.opt = c("append", "overwrite"),
+                      opt = list(out.opt = c("overwrite", "append"),
                                  err.opt = c("abort", "continue"),
                                  eb = FALSE,
                                  verbose = FALSE)) {
@@ -185,7 +185,16 @@ ez.combat <- function(df,
   }
 
   bayesdata <- (bayesdata*(sqrt(var.pooled)%*%t(rep(1,n.array))))+stand.mean
-  return(list(df=bayesdata,
+
+  if (opts$out.opt[1] == "append") {
+    new.df <- data.frame(df, t(bayesdata))
+    colnames(df) <- c(colnames(df), paste0(dv.ls, ".cb"))
+  } else if (opts$out.opt[1] == "overwrite") {
+    new.df <- df
+    new.df[ ,dv.ls] <- t(bayesdata)
+  }
+
+  return(list(df=new.df,
               gamma.hat=gamma.hat, delta.hat=delta.hat,
               gamma.star=gamma.star, delta.star=delta.star,
               gamma.bar=gamma.bar, t2=t2, a.prior=a.prior, b.prior=b.prior, batch=batch, mod=mod,
