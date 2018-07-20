@@ -26,16 +26,26 @@ ez.combat <- function(df,
                                  verbose = FALSE)) {
 
   # Debug ----
+  # rm(list=ls())
+  # gc()
+  #
+  # load("/IPLlinux/raid0/homes/koscikt/Downloads/combat.example.rdata")
+  # rm(list=c("dat", "df", "mod", "new.dat", "new.fs", "adjust.var", "age", "batch", "batch.var", "exclude.var", "model", "sex", "type", "aprior", "bprior", "combat", "createMatchingIndices", "it.sol", "postmean", "postvar"))
+  #
+  # library(ez.combat)
   # df <- read.csv("/rdss/vandrpla/Analyses-Repository/Kids-HD/Brain-Morphology/Jeff-Long-Data-Prep/kidsHD-uncorrected-data.csv")
   # batch.var <- "scanner"
   # adjust.var <- "all"
-  # exclude.var <- c("MRQID", "URSI.ID", "Event.Name", "Assessment.ID", "Type",
+  # exclude.var <- c("MRQID", "URSI.ID", "Event.Name", "Assessment.ID", "Group",
   #                  "Family.Number", "UHDRS.Diagnosis", "JHD.UHDRS",
   #                  "AssessmentID", "Allele1", "Allele2", "GeneStatus",
   #                  "YearstoOnset")
-  # model <- "~ Group + Sex + Age"
+  # model <- "~ Sex + Age + Type"
 
-  # Gather and check variable list ---------------------------------------------
+  # Convert batch vairable to numeric ------------------------------------------
+  df[ ,batch.var] <- as.numeric(df[ ,batch.var])
+
+    # Gather and check variable list ---------------------------------------------
   if (!is.null(model)) {
     iv.ls <- unlist(strsplit(as.character(model), split="[~+*: ]"))
     iv.ls <- iv.ls[-which(iv.ls == "")]
@@ -124,7 +134,6 @@ ez.combat <- function(df,
   ##Standardize Data across features
   if (opt$verbose) cat('[EZ.combat] Standardizing Data across features\n')
   B.hat <- solve(t(design)%*%design)%*%t(design)%*%t(as.matrix(dat))
-
 
   #Standarization Model
   grand.mean <- t(n.batches/n.array)%*%B.hat[1:n.batch,]
