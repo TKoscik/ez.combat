@@ -122,7 +122,7 @@ ez.combat <- function(df,
   }
 
   ##Standardize Data across features
-  if (verbose) cat('[EZ.combat] Standardizing Data across features\n')
+  if (opt$verbose) cat('[EZ.combat] Standardizing Data across features\n')
   B.hat <- solve(t(design)%*%design)%*%t(design)%*%t(as.matrix(dat))
 
 
@@ -137,10 +137,10 @@ ez.combat <- function(df,
   s.data <- (dat-stand.mean)/(sqrt(var.pooled)%*%t(rep(1,n.array)))
 
   ##Get regression batch effect parameters
-  if (eb){
-    if (verbose) cat("[EZ.combat] Fitting L/S model and finding priors\n")
+  if (opt$eb){
+    if (opt$verbose) cat("[EZ.combat] Fitting L/S model and finding priors\n")
   } else {
-    if (verbose) cat("[EZ.combat] Fitting L/S model\n")
+    if (opt$verbose) cat("[EZ.combat] Fitting L/S model\n")
   }
 
   batch.design <- design[,1:n.batch]
@@ -154,7 +154,7 @@ ez.combat <- function(df,
   # Empirical Bayes correction:
   gamma.star <- delta.star <- NULL
   gamma.bar <- t2 <- a.prior <- b.prior <- NULL
-  if (eb){
+  if (opt$eb){
     ##Find Priors
     gamma.bar <- apply(gamma.hat, 1, mean)
     t2 <- apply(gamma.hat, 1, var)
@@ -163,7 +163,7 @@ ez.combat <- function(df,
 
 
     ##Find EB batch adjustments
-    if (verbose) cat("[EZ.combat] Finding parametric adjustments\n")
+    if (opt$verbose) cat("[EZ.combat] Finding parametric adjustments\n")
     for (i in 1:n.batch){
       temp <- it.sol(s.data[,batches[[i]]],gamma.hat[i,],delta.hat[i,],gamma.bar[i],t2[i],a.prior[i],b.prior[i])
       gamma.star <- rbind(gamma.star,temp[1,])
@@ -172,11 +172,11 @@ ez.combat <- function(df,
   }
 
   ### Normalize the Data ###
-  if (verbose) cat("[EZ.combat] Adjusting the Data\n")
+  if (opt$verbose) cat("[EZ.combat] Adjusting the Data\n")
   bayesdata <- s.data
   j <- 1
   for (i in batches){
-    if (eb){
+    if (opt$eb){
       bayesdata[,i] <- (bayesdata[,i]-t(batch.design[i,]%*%gamma.star))/(sqrt(delta.star[j,])%*%t(rep(1,n.batches[j])))
     } else {
       bayesdata[,i] <- (bayesdata[,i]-t(batch.design[i,]%*%gamma.hat))/(sqrt(delta.hat[j,])%*%t(rep(1,n.batches[j])))
