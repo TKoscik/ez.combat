@@ -26,21 +26,21 @@ ez.combat <- function(df,
                                  verbose = FALSE)) {
 
   # Debug ----
-  rm(list=ls())
-  gc()
+  # rm(list=ls())
+  # gc()
   #
   # load("/IPLlinux/raid0/homes/koscikt/Downloads/combat.example.rdata")
   # rm(list=c("dat", "df", "mod", "new.dat", "new.fs", "adjust.var", "age", "batch", "batch.var", "exclude.var", "model", "sex", "type", "aprior", "bprior", "combat", "createMatchingIndices", "it.sol", "postmean", "postvar"))
   #
-  library(ez.combat)
-  df <- read.csv("/rdss/vandrpla/Analyses-Repository/Kids-HD/Brain-Morphology/Jeff-Long-Data-Prep/kidsHD-uncorrected-data.csv")
-  batch.var <- "scanner"
-  adjust.var <- "all"
-  exclude.var <- c("MRQID", "URSI.ID", "Event.Name", "Assessment.ID", "Group",
-                   "Family.Number", "UHDRS.Diagnosis", "JHD.UHDRS",
-                   "AssessmentID", "Allele1", "Allele2", "GeneStatus",
-                   "YearstoOnset")
-  model <- "~ Sex + Age + Type"
+  # library(ez.combat)
+  # df <- read.csv("/rdss/vandrpla/Analyses-Repository/Kids-HD/Brain-Morphology/Jeff-Long-Data-Prep/kidsHD-uncorrected-data.csv")
+  # batch.var <- "scanner"
+  # adjust.var <- "all"
+  # exclude.var <- c("MRQID", "URSI.ID", "Event.Name", "Assessment.ID", "Group",
+  #                  "Family.Number", "UHDRS.Diagnosis", "JHD.UHDRS",
+  #                  "AssessmentID", "Allele1", "Allele2", "GeneStatus",
+  #                  "YearstoOnset")
+  # model <- "~ Sex + Age + Type"
 
 
   orig.f <- df # keep df in original state for output
