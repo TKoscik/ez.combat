@@ -3,9 +3,9 @@
 
 ****
 
-**Maintainer**: Timothy R. Koscik, <timkoscik+ezcombat@gmail.com>
-**License**: Artistic License 2.0
-**Alternative Implementation**: https://github.com/Jfortin1/ComBatHarmonization
+**Maintainer**: Timothy R. Koscik, <timkoscik+ezcombat@gmail.com>  
+**License**: Artistic License 2.0  
+**Alternative Implementation**: https://github.com/Jfortin1/ComBatHarmonization  
 
 **References**: If you are using ComBat for the harmonization of multi-site imaging data, please cite the following papers:
 
