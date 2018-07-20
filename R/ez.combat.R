@@ -22,30 +22,12 @@ ez.combat <- function(df,
                       model = NULL,
                       opt = list(out.opt = c("overwrite", "append"),
                                  err.opt = c("abort", "continue"),
-                                 eb = FALSE,
+                                 eb = TRUE,
                                  verbose = FALSE)) {
-
-  # Debug ----
-  # rm(list=ls())
-  # gc()
-  #
-  # load("/IPLlinux/raid0/homes/koscikt/Downloads/combat.example.rdata")
-  # rm(list=c("dat", "df", "mod", "new.dat", "new.fs", "adjust.var", "age", "batch", "batch.var", "exclude.var", "model", "sex", "type", "aprior", "bprior", "combat", "createMatchingIndices", "it.sol", "postmean", "postvar"))
-  #
-  # library(ez.combat)
-  # df <- read.csv("/rdss/vandrpla/Analyses-Repository/Kids-HD/Brain-Morphology/Jeff-Long-Data-Prep/kidsHD-uncorrected-data.csv")
-  # batch.var <- "scanner"
-  # adjust.var <- "all"
-  # exclude.var <- c("MRQID", "URSI.ID", "Event.Name", "Assessment.ID", "Group",
-  #                  "Family.Number", "UHDRS.Diagnosis", "JHD.UHDRS",
-  #                  "AssessmentID", "Allele1", "Allele2", "GeneStatus",
-  #                  "YearstoOnset")
-  # model <- "~ Sex + Age + Type"
-
 
   orig.f <- df # keep df in original state for output
 
-    # Gather and check variable list ---------------------------------------------
+  # Gather and check variable list ---------------------------------------------
   if (!is.null(model)) {
     iv.ls <- unlist(strsplit(as.character(model), split="[~+*: ]"))
     iv.ls <- iv.ls[-which(iv.ls == "")]
@@ -82,10 +64,10 @@ ez.combat <- function(df,
     if (opt$err.opt[1] == "continue") {
       dv.ls <- dv.ls[-which(sd.chk)]
       if (opt$verbose) {
-        warning(sprintf("%s has been excluded as it is constant across samples.\n", dv.ls))
+        warning(sprintf("[EZ.combat] %s has been excluded as it is constant across samples.\n", dv.ls))
       }
     } else {
-      stop(sprintf("ComBat aborted: %s is constant across samples.\n", dv.ls))
+      stop(sprintf("[EZ.combat] aborted: %s is constant across samples.\n", dv.ls))
     }
   }
 
