@@ -26,30 +26,34 @@ ez.combat <- function(df,
                                  verbose = FALSE)) {
 
   # Debug ----
-  # rm(list=ls())
-  # gc()
+  rm(list=ls())
+  gc()
   #
   # load("/IPLlinux/raid0/homes/koscikt/Downloads/combat.example.rdata")
   # rm(list=c("dat", "df", "mod", "new.dat", "new.fs", "adjust.var", "age", "batch", "batch.var", "exclude.var", "model", "sex", "type", "aprior", "bprior", "combat", "createMatchingIndices", "it.sol", "postmean", "postvar"))
   #
-  # library(ez.combat)
-  # df <- read.csv("/rdss/vandrpla/Analyses-Repository/Kids-HD/Brain-Morphology/Jeff-Long-Data-Prep/kidsHD-uncorrected-data.csv")
-  # batch.var <- "scanner"
-  # adjust.var <- "all"
-  # exclude.var <- c("MRQID", "URSI.ID", "Event.Name", "Assessment.ID", "Group",
-  #                  "Family.Number", "UHDRS.Diagnosis", "JHD.UHDRS",
-  #                  "AssessmentID", "Allele1", "Allele2", "GeneStatus",
-  #                  "YearstoOnset")
-  # model <- "~ Sex + Age + Type"
+  library(ez.combat)
+  df <- read.csv("/rdss/vandrpla/Analyses-Repository/Kids-HD/Brain-Morphology/Jeff-Long-Data-Prep/kidsHD-uncorrected-data.csv")
+  batch.var <- "scanner"
+  adjust.var <- "all"
+  exclude.var <- c("MRQID", "URSI.ID", "Event.Name", "Assessment.ID", "Group",
+                   "Family.Number", "UHDRS.Diagnosis", "JHD.UHDRS",
+                   "AssessmentID", "Allele1", "Allele2", "GeneStatus",
+                   "YearstoOnset")
+  model <- "~ Sex + Age + Type"
 
-  # Convert batch vairable to numeric ------------------------------------------
-  df[ ,batch.var] <- as.numeric(df[ ,batch.var])
+
+  orig.f <- df # keep df in original state for output
 
     # Gather and check variable list ---------------------------------------------
   if (!is.null(model)) {
     iv.ls <- unlist(strsplit(as.character(model), split="[~+*: ]"))
     iv.ls <- iv.ls[-which(iv.ls == "")]
+    for (i in 1:length(iv.ls)) {
+      df[ ,iv.ls[i]] <- as.numeric(df[ ,iv.ls[i]])
+    }
   }
+
   model <- switch(class(model),
                   `NULL` = NULL,
                   `character` = model <- model.matrix(as.formula(model), df),
@@ -196,17 +200,17 @@ ez.combat <- function(df,
   bayesdata <- (bayesdata*(sqrt(var.pooled)%*%t(rep(1,n.array))))+stand.mean
 
   if (opt$out.opt[1] == "append") {
-    new.df <- data.frame(df, t(bayesdata))
-    colnames(df) <- c(colnames(df), paste0(dv.ls, ".cb"))
+    new.df <- data.frame(orig.f, t(bayesdata))
+    colnames(orig.f) <- c(colnames(orig.f), paste0(dv.ls, ".cb"))
   } else if (opt$out.opt[1] == "overwrite") {
-    new.df <- df
+    new.df <- orig.f
     new.df[ ,dv.ls] <- t(bayesdata)
   }
 
   return(list(df=new.df,
               gamma.hat=gamma.hat, delta.hat=delta.hat,
               gamma.star=gamma.star, delta.star=delta.star,
-              gamma.bar=gamma.bar, t2=t2, a.prior=a.prior, b.prior=b.prior, batch=batch, mod=mod,
+              gamma.bar=gamma.bar, t2=t2, a.prior=a.prior, b.prior=b.prior, batch=batch, mod=model,
               stand.mean=stand.mean, stand.sd=sqrt(var.pooled)[,1])
   )
 }
