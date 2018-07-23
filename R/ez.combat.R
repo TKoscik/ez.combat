@@ -34,6 +34,8 @@ ez.combat <- function(df,
     for (i in 1:length(iv.ls)) {
       df[ ,iv.ls[i]] <- as.numeric(df[ ,iv.ls[i]])
     }
+  } else {
+    iv.ls <- NULL
   }
 
   model <- switch(class(model),
@@ -43,7 +45,9 @@ ez.combat <- function(df,
                   otherwise = error("[EZ combat] Cannot parse model"))
 
   if (adjust.var == "all") {
-    dv.ls <- colnames(df)[!(colnames(df) %in% iv.ls)]
+    if (!is.null(iv.ls)) {
+      dv.ls <- colnames(df)[!(colnames(df) %in% iv.ls)]
+    }
   } else {
     dv.ls <- adjust.var
   }
