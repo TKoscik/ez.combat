@@ -47,6 +47,8 @@ ez.combat <- function(df,
   if (adjust.var == "all") {
     if (!is.null(iv.ls)) {
       dv.ls <- colnames(df)[!(colnames(df) %in% iv.ls)]
+    } else {
+      dv.ls <- colnames(df)
     }
   } else {
     dv.ls <- adjust.var
