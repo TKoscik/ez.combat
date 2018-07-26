@@ -44,7 +44,7 @@ ez.combat <- function(df,
                   `formula` = model <- model.matrix(as.formula(model), df),
                   otherwise = error("[EZ combat] Cannot parse model"))
 
-  if (adjust.var == "all") {
+  if (adjust.var[1] == "all") {
     if (!is.null(iv.ls)) {
       dv.ls <- colnames(df)[!(colnames(df) %in% iv.ls)]
     } else {
