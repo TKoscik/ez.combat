@@ -58,6 +58,11 @@ ez.combat <- function(df,
   if (!is.null(exclude.var)) {
     dv.ls <- dv.ls[!dv.ls %in% exclude.var]
   }
+  orig.dv.ls <- dv.ls
+  if (length(dv.ls) > 100) {
+    warning("[EZ.combat] Appending so many variables to an existing dataframe may take a long time, consider overiting output instead.")
+  }
+  
   # Convert df to dat ----------------------------------------------------------
   dat <- t(as.matrix(df[ ,dv.ls]))
 
@@ -123,11 +128,11 @@ ez.combat <- function(df,
     }
   }
 
-  ##Standardize Data across features
+  # Standardize Data across features -------------------------------------------
   if (opt$verbose) cat('[EZ.combat] Standardizing Data across features\n')
   B.hat <- solve(t(design)%*%design)%*%t(design)%*%t(as.matrix(dat))
 
-  #Standarization Model
+  # Standarization Model -------------------------------------------------------
   grand.mean <- t(n.batches/n.array)%*%B.hat[1:n.batch,]
   var.pooled <- ((dat-t(design%*%B.hat))^2)%*%rep(1/n.array,n.array)
   stand.mean <- t(grand.mean)%*%t(rep(1,n.array))
@@ -137,7 +142,7 @@ ez.combat <- function(df,
   }
   s.data <- (dat-stand.mean)/(sqrt(var.pooled)%*%t(rep(1,n.array)))
 
-  ##Get regression batch effect parameters
+  # Get regression batch effect parameters -------------------------------------
   if (opt$eb){
     if (opt$verbose) cat("[EZ.combat] Fitting L/S model and finding priors\n")
   } else {
@@ -152,7 +157,7 @@ ez.combat <- function(df,
     delta.hat <- rbind(delta.hat,apply(s.data[,i], 1, var,na.rm=T))
   }
 
-  # Empirical Bayes correction:
+  # Empirical Bayes correction: -----------------------------------------------
   gamma.star <- delta.star <- NULL
   gamma.bar <- t2 <- a.prior <- b.prior <- NULL
   if (opt$eb){
@@ -162,7 +167,7 @@ ez.combat <- function(df,
     a.prior <- apply(delta.hat, 1, aprior)
     b.prior <- apply(delta.hat, 1, bprior)
 
-    ##Find EB batch adjustments
+    # Find EB batch adjustments
     if (opt$verbose) cat("[EZ.combat] Finding parametric adjustments\n")
     for (i in 1:n.batch){
       temp <- it.sol(s.data[,batches[[i]]],gamma.hat[i,],delta.hat[i,],gamma.bar[i],t2[i],a.prior[i],b.prior[i])
@@ -171,7 +176,7 @@ ez.combat <- function(df,
     }
   }
 
-  ### Normalize the Data ###
+  ### Normalize the Data ### -------------------------------------------------------
   if (opt$verbose) cat("[EZ.combat] Adjusting the Data\n")
   bayesdata <- s.data
   j <- 1
@@ -183,12 +188,13 @@ ez.combat <- function(df,
     }
     j <- j+1
   }
-
   bayesdata <- (bayesdata*(sqrt(var.pooled)%*%t(rep(1,n.array))))+stand.mean
 
   if (opt$out.opt[1] == "append") {
-    new.df <- data.frame(orig.f, t(bayesdata))
-    colnames(new.df) <- c(colnames(orig.f), paste0(dv.ls, ".cb"))
+    temp.df <- orig.f[ ,orig.dv.ls] 
+    temp.df[ ,dv.ls] <- t(bayesdata)
+    new.df <- data.frame(orig.f, temp.df)
+    colnames(new.df) <- c(colnames(orig.f), paste0(orig.dv.ls, ".cb"))
   } else if (opt$out.opt[1] == "overwrite") {
     new.df <- orig.f
     new.df[ ,dv.ls] <- t(bayesdata)
