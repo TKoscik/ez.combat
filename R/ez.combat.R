@@ -70,16 +70,15 @@ ez.combat <- function(df,
   sd.chk <- apply(df[ ,dv.ls], 2, sd)
   sd.chk <- sd.chk == 0
   
-  count <- 0
-  print(count+1)
+  print(1)
   if (any(sd.chk)) {
     if (opt$err.opt[1] == "continue") {
-      print(count+1)
+      print(2
       dv.ls <- dv.ls[-which(sd.chk)]
-      print(count+1)
+      print(3)
       dat <- t(as.matrix(df[ ,dv.ls]))
       if (opt$verbose) {
-        warning(sprintf("[EZ.combat] %s has been excluded as it is constant across samples.\n", dv.ls))
+        #warning(sprintf("[EZ.combat] %s has been excluded as it is constant across samples.\n", dv.ls))
       }
     } else {
       stop(sprintf("[EZ.combat] aborted: %s is constant across samples.\n", dv.ls))
@@ -93,8 +92,7 @@ ez.combat <- function(df,
     cat("[EZ.combat] Performing ComBat without empirical Bayes (L/S model)\n")
   }
   
-  count <- 0
-  print(count+1)
+  print(4)
   # make batch a factor and make a set of indicators for batch -----------------
   batch <- as.factor(df[ , batch.var])
   batchmod <- model.matrix(~-1+batch)
