@@ -197,7 +197,10 @@ ez.combat <- function(df,
     colnames(new.df) <- c(colnames(orig.f), paste0(orig.dv.ls, ".cb"))
   } else if (opt$out.opt[1] == "overwrite") {
     new.df <- orig.f
-    new.df[ ,dv.ls] <- t(bayesdata)
+    temp <- t(bayesdata)
+    for (i in 1:length(dv.ls)) {
+      new.df[ ,dv.ls[i]] <- temp[ ,i]
+    }    
   }
 
   return(list(df=new.df,
