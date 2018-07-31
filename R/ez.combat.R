@@ -62,13 +62,13 @@ ez.combat <- function(df,
   dat <- t(as.matrix(df[ ,dv.ls]))
 
   # Check and remove constant variables (or abort) -----------------------------
-  sd.chk <- logical(length(dv.ls))
-  for (i in 1:length(dv.ls)) {
-    sd.chk[i] <- sd(df[ ,dv.ls[i]]) == 0
-  }
+  sd.chk <- apply(df[ ,dv.ls], 2, sd)
+  sd.chk <- sd.chk == 0
+  
   if (any(sd.chk)) {
     if (opt$err.opt[1] == "continue") {
       dv.ls <- dv.ls[-which(sd.chk)]
+      dat <- t(as.matrix(df[ ,dv.ls]))
       if (opt$verbose) {
         warning(sprintf("[EZ.combat] %s has been excluded as it is constant across samples.\n", dv.ls))
       }
@@ -162,7 +162,6 @@ ez.combat <- function(df,
     a.prior <- apply(delta.hat, 1, aprior)
     b.prior <- apply(delta.hat, 1, bprior)
 
-
     ##Find EB batch adjustments
     if (opt$verbose) cat("[EZ.combat] Finding parametric adjustments\n")
     for (i in 1:n.batch){
@@ -189,7 +188,7 @@ ez.combat <- function(df,
 
   if (opt$out.opt[1] == "append") {
     new.df <- data.frame(orig.f, t(bayesdata))
-    colnames(orig.f) <- c(colnames(orig.f), paste0(dv.ls, ".cb"))
+    colnames(new.df) <- c(colnames(orig.f), paste0(dv.ls, ".cb"))
   } else if (opt$out.opt[1] == "overwrite") {
     new.df <- orig.f
     new.df[ ,dv.ls] <- t(bayesdata)
