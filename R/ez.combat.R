@@ -59,7 +59,7 @@ ez.combat <- function(df,
     dv.ls <- dv.ls[!dv.ls %in% exclude.var]
   }
   orig.dv.ls <- dv.ls
-  if (length(dv.ls) > 100) {
+  if (length(dv.ls) > 100 & opt$out.opt == "append") {
     warning("[EZ.combat] Appending so many variables to an existing dataframe may take a long time, consider overiting output instead.")
   }
   
