@@ -70,9 +70,13 @@ ez.combat <- function(df,
   sd.chk <- apply(df[ ,dv.ls], 2, sd)
   sd.chk <- sd.chk == 0
   
+  count <- 0
+  print(count+1)
   if (any(sd.chk)) {
     if (opt$err.opt[1] == "continue") {
+      print(count+1)
       dv.ls <- dv.ls[-which(sd.chk)]
+      print(count+1)
       dat <- t(as.matrix(df[ ,dv.ls]))
       if (opt$verbose) {
         warning(sprintf("[EZ.combat] %s has been excluded as it is constant across samples.\n", dv.ls))
