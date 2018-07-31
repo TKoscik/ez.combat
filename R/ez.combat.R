@@ -73,7 +73,7 @@ ez.combat <- function(df,
   print(1)
   if (any(sd.chk)) {
     if (opt$err.opt[1] == "continue") {
-      print(2
+      print(2)
       dv.ls <- dv.ls[-which(sd.chk)]
       print(3)
       dat <- t(as.matrix(df[ ,dv.ls]))
