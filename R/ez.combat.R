@@ -88,12 +88,15 @@ ez.combat <- function(df,
   } else if (opt$verbose) {
     cat("[EZ.combat] Performing ComBat without empirical Bayes (L/S model)\n")
   }
-
+  
+  count <- 0
+  print(count+1)
   # make batch a factor and make a set of indicators for batch -----------------
   batch <- as.factor(df[ , batch.var])
   batchmod <- model.matrix(~-1+batch)
   if (opt$verbose) cat("[EZ.combat] Found",nlevels(batch),'batches\n')
 
+  print(count+1)
   # A few other characteristics on the batches ---------------------------------
   n.batch <- nlevels(batch)
   batches <- list()
@@ -101,12 +104,14 @@ ez.combat <- function(df,
   n.batches <- sapply(batches, length)
   n.array <- sum(n.batches)
 
+  print(count+1)
   # combine batch variable and covariates --------------------------------------
   design <- cbind(batchmod,model)
   # check for intercept in covariates, and drop if present ---------------------
   check <- apply(design, 2, function(x) all(x == 1))
   design <- as.matrix(design[,!check])
 
+  print(count+1)
   # Number of covariates or covariate levels
   if (opt$verbose) {
     cat("[EZ combat] Adjusting for",
@@ -114,6 +119,7 @@ ez.combat <- function(df,
         "covariate(s) or covariate level(s)\n")
   }
 
+  print(count+1)
   # Check if the design is confounded ------------------------------------------
   if(qr(design)$rank<ncol(design)){
     if(ncol(design)==(n.batch+1)){
@@ -128,10 +134,12 @@ ez.combat <- function(df,
     }
   }
 
+  print(count+1)
   # Standardize Data across features -------------------------------------------
   if (opt$verbose) cat('[EZ.combat] Standardizing Data across features\n')
   B.hat <- solve(t(design)%*%design)%*%t(design)%*%t(as.matrix(dat))
 
+  print(count+1)
   # Standarization Model -------------------------------------------------------
   grand.mean <- t(n.batches/n.array)%*%B.hat[1:n.batch,]
   var.pooled <- ((dat-t(design%*%B.hat))^2)%*%rep(1/n.array,n.array)
@@ -142,6 +150,7 @@ ez.combat <- function(df,
   }
   s.data <- (dat-stand.mean)/(sqrt(var.pooled)%*%t(rep(1,n.array)))
 
+  print(count+1)
   # Get regression batch effect parameters -------------------------------------
   if (opt$eb){
     if (opt$verbose) cat("[EZ.combat] Fitting L/S model and finding priors\n")
@@ -149,14 +158,17 @@ ez.combat <- function(df,
     if (opt$verbose) cat("[EZ.combat] Fitting L/S model\n")
   }
 
+  print(count+1)
   batch.design <- design[,1:n.batch]
   gamma.hat <- solve(t(batch.design)%*%batch.design)%*%t(batch.design)%*%t(as.matrix(s.data))
 
+  print(count+1)
   delta.hat <- NULL
   for (i in batches){
     delta.hat <- rbind(delta.hat,apply(s.data[,i], 1, var,na.rm=T))
   }
 
+  print(count+1)
   # Empirical Bayes correction: -----------------------------------------------
   gamma.star <- delta.star <- NULL
   gamma.bar <- t2 <- a.prior <- b.prior <- NULL
@@ -176,6 +188,7 @@ ez.combat <- function(df,
     }
   }
 
+  print(count+1)
   ### Normalize the Data ### -------------------------------------------------------
   if (opt$verbose) cat("[EZ.combat] Adjusting the Data\n")
   bayesdata <- s.data
