@@ -67,7 +67,7 @@ ez.combat <- function(df,
   dat <- t(as.matrix(df[ ,dv.ls]))
 
   # Check and remove constant variables (or abort) -----------------------------
-  sd.chk <- apply(df[ ,dv.ls], 2, sd)
+  sd.chk <- apply(df[ ,dv.ls], 2, sd, na.rm=TRUE)
   sd.chk <- sd.chk == 0
   
   if (any(sd.chk)) {
