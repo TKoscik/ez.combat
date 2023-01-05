@@ -1,5 +1,6 @@
 aprior <- function(gamma.hat){
-  m=mean(gamma.hat)
-  s2=var(gamma.hat)
-  return((2*s2+m^2)/s2)
+  m <- mean(gamma.hat)
+  v <- var(gamma_hat)
+  output <- (2 * v + m^2) / v
+  return(output)
 }
